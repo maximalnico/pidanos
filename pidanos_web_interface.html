@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pidanos</title>
+    <style>
+        /* Apple-inspired design system */
+        :root {
+            --primary-color: #007AFF;
+            --primary-hover: #0056CC;
+            --success-color: #34C759;
+            --warning-color: #FF9500;
+            --danger-color: #FF3B30;
+            --background: #F2F2F7;
+            --surface: #FFFFFF;
+            --surface-secondary: #F9F9F9;
+            --text-primary: #1D1D1F;
+            --text-secondary: #86868B;
+            --border: #D1D1D6;
+            --shadow: rgba(0, 0, 0, 0.1);
+            --radius: 12px;
+            --radius-large: 16px;
+            --spacing: 16px;
+            --font-system: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-system);
+            background: var(--background);
+            color: var(--text-primary);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Header */
+        .header {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: var(--spacing) 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(20px);
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--spacing);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--primary-color), #5856D6);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: var(--success-color);
+            color: white;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Main Content */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: var(--spacing);
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: var(--spacing);
+            margin-bottom: calc(var(--spacing) * 2);
+        }
+
+        .card {
+            background: var(--surface);
+            border-radius: var(--radius-large);
+            padding: calc(var(--spacing) * 1.5);
+            box-shadow: 0 4px 20px var(--shadow);
+            border: 1px solid var(--border);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px var(--shadow);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: var(--spacing);
+        }
+
+        .card-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: white;
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .card-value {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .card-subtitle {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Specific card styles */
+        .queries-card .card-icon { background: var(--primary-color); }
+        .blocked-card .card-icon { background: var(--danger-color); }
+        .percentage-card .card-icon { background: var(--success-color); }
+        .lists-card .card-icon { background: var(--warning-color); }
+
+        /* Charts */
+        .chart-container {
+            background: var(--surface);
+            border-radius: var(--radius-large);
+            padding: calc(var(--spacing) * 1.5);
+            box-shadow: 0 4px 20px var(--shadow);
+            border: 1px solid var(--border);
+            margin-bottom: var(--spacing);
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing);
+        }
+
+        .chart-title {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .time-selector {
+            display: flex;
+            background: var(--surface-secondary);
+            border-radius: 8px;
+            padding: 4px;
+        }
+
+        .time-option {
+            padding: 6px 12px;
+            border: none;
+            background: none;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .time-option.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .chart-placeholder {
+            height: 300px;
+            background: var(--surface-secondary);
+            border-radius: var(--radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            font-size: 16px;
+        }
+
+        /* Controls */
+        .controls {
+            background: var(--surface);
+            border-radius: var(--radius-large);
+            padding: calc(var(--spacing) * 1.5);
+            box-shadow: 0 4px 20px var(--shadow);
+            border: 1px solid var(--border);
+            margin-bottom: var(--spacing);
+        }
+
+        .controls-header {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: var(--spacing);
+        }
+
+        .toggle-group {
+            display: flex;
+            gap: var(--spacing);
+            flex-wrap: wrap;
+        }
+
+        .toggle-button {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            background: var(--surface-secondary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .toggle-button:hover {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .toggle-button.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: calc(var(--spacing) * 2) 0;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: var(--spacing);
+            }
+            
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            .toggle-group {
+                flex-direction: column;
+            }
+            
+            .card-value {
+                font-size: 28px;
+            }
+        }
+
+        /* Loading animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--border);
+            border-radius: 50%;
+            border-top-color: var(--primary-color);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon">🛡️</div>
+                <span>Pidanos</span>
+            </div>
+            <div class="status-indicator">
+                <div class="status-dot"></div>
+                <span>Active Protection</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="dashboard">
+            <div class="card queries-card">
+                <div class="card-header">
+                    <div class="card-icon">📊</div>
+                    <div class="card-title">Total Queries</div>
+                </div>
+                <div class="card-value" id="total-queries">0</div>
+                <div class="card-subtitle">DNS requests today</div>
+            </div>
+
+            <div class="card blocked-card">
+                <div class="card-header">
+                    <div class="card-icon">🚫</div>
+                    <div class="card-title">Blocked</div>
+                </div>
+                <div class="card-value" id="blocked-count">0</div>
+                <div class="card-subtitle">Ads & trackers blocked</div>
+            </div>
+
+            <div class="card percentage-card">
+                <div class="card-header">
+                    <div class="card-icon">📈</div>
+                    <div class="card-title">Block Rate</div>
+                </div>
+                <div class="card-value" id="block-percentage">0%</div>
+                <div class="card-subtitle">Percentage blocked</div>
+            </div>
+
+            <div class="card lists-card">
+                <div class="card-header">
+                    <div class="card-icon">📋</div>
+                    <div class="card-title">Block Lists</div>
+                </div>
+                <div class="card-value" id="blocklist-count">5</div>
+                <div class="card-subtitle">Active filter lists</div>
+            </div>
+        </section>
+
+        <section class="chart-container">
+            <div class="chart-header">
+                <h2 class="chart-title">Query Activity</h2>
+                <div class="time-selector">
+                    <button class="time-option active" data-period="24h">24h</button>
+                    <button class="time-option" data-period="7d">7d</button>
+                    <button class="time-option" data-period="30d">30d</button>
+                </div>
+            </div>
+            <div class="chart-placeholder">
+                📈 Real-time query charts coming soon
+            </div>
+        </section>
+
+        <section class="controls">
+            <h2 class="controls-header">Quick Actions</h2>
+            <div class="toggle-group">
+                <button class="toggle-button active" id="protection-toggle">
+                    🛡️ Protection Enabled
+                </button>
+                <button class="toggle-button" id="update-lists">
+                    🔄 Update Block Lists
+                </button>
+                <button class="toggle-button" id="flush-cache">
+                    🧹 Clear DNS Cache
+                </button>
+                <button class="toggle-button" id="view-logs">
+                    📝 View Query Log
+                </button>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <p>Pidanos • Network-wide ad blocking • Made with ❤️ for a better internet</p>
+    </footer>
+
+    <script>
+        // Simulated API calls and real-time updates
+        class PidanosUI {
+            constructor() {
+                this.isProtectionEnabled = true;
+                this.initEventListeners();
+                this.startRealTimeUpdates();
+                this.updateStats();
+            }
+
+            initEventListeners() {
+                // Protection toggle
+                document.getElementById('protection-toggle').addEventListener('click', () => {
+                    this.toggleProtection();
+                });
+
+                // Update lists
+                document.getElementById('update-lists').addEventListener('click', () => {
+                    this.updateBlockLists();
+                });
+
+                // Flush cache
+                document.getElementById('flush-cache').addEventListener('click', () => {
+                    this.flushCache();
+                });
+
+                // View logs
+                document.getElementById('view-logs').addEventListener('click', () => {
+                    this.viewLogs();
+                });
+
+                // Time selector
+                document.querySelectorAll('.time-option').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        document.querySelectorAll('.time-option').forEach(b => b.classList.remove('active'));
+                        e.target.classList.add('active');
+                        this.updateChart(e.target.dataset.period);
+                    });
+                });
+            }
+
+            async toggleProtection() {
+                const btn = document.getElementById('protection-toggle');
+                const originalText = btn.textContent;
+                
+                btn.innerHTML = '<div class="loading"></div> Updating...';
+                btn.disabled = true;
+
+                // Simulate API call
+                await new Promise(resolve => setTimeout(resolve, 1000));
+
+                this.isProtectionEnabled = !this.isProtectionEnabled;
+                
+                if (this.isProtectionEnabled) {
+                    btn.textContent = '🛡️ Protection Enabled';
+                    btn.classList.add('active');
+                    document.querySelector('.status-indicator').style.background = 'var(--success-color)';
+                    document.querySelector('.status-indicator span').textContent = 'Active Protection';
+                } else {
+                    btn.textContent = '⚠️ Protection Disabled';
+                    btn.classList.remove('active');
+                    document.querySelector('.status-indicator').style.background = 'var(--warning-color)';
+                    document.querySelector('.status-indicator span').textContent = 'Protection Disabled';
+                }
+                
+                btn.disabled = false;
+            }
+
+            async updateBlockLists() {
+                const btn = document.getElementById('update-lists');
+                const originalText = btn.textContent;
+                
+                btn.innerHTML = '<div class="loading"></div> Updating...';
+                btn.disabled = true;
+
+                // Simulate API call
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                
+                btn.textContent = '✅ Lists Updated';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.disabled = false;
+                }, 2000);
+            }
+
+            async flushCache() {
+                const btn = document.getElementById('flush-cache');
+                const originalText = btn.textContent;
+                
+                btn.innerHTML = '<div class="loading"></div> Clearing...';
+                btn.disabled = true;
+
+                // Simulate API call
+                await new Promise(resolve => setTimeout(resolve, 800));
+                
+                btn.textContent = '✅ Cache Cleared';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.disabled = false;
+                }, 2000);
+            }
+
+            viewLogs() {
+                // In a real implementation, this would open a logs modal or page
+                alert('Query logs feature coming soon! 📝');
+            }
+
+            updateChart(period) {
+                // In a real implementation, this would fetch and render chart data
+                console.log(`Updating chart for period: ${period}`);
+            }
+
+            updateStats() {
+                // Simulate real-time stats updates
+                const stats = this.generateMockStats();
+                
+                document.getElementById('total-queries').textContent = stats.totalQueries.toLocaleString();
+                document.getElementById('blocked-count').textContent = stats.blockedCount.toLocaleString();
+                document.getElementById('block-percentage').textContent = `${stats.blockPercentage.toFixed(1)}%`;
+            }
+
+            generateMockStats() {
+                const baseQueries = 45230;
+                const baseBlocked = 12845;
+                const variation = Math.sin(Date.now() / 10000) * 100;
+                
+                const totalQueries = Math.floor(baseQueries + variation);
+                const blockedCount = Math.floor(baseBlocked + variation * 0.3);
+                const blockPercentage = (blockedCount / totalQueries) * 100;
+
+                return { totalQueries, blockedCount, blockPercentage };
+            }
+
+            startRealTimeUpdates() {
+                // Update stats every 5 seconds
+                setInterval(() => {
+                    this.updateStats();
+                }, 5000);
+            }
+        }
+
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', () => {
+            new PidanosUI();
+        });
+    </script>
+</body>
+</html>
